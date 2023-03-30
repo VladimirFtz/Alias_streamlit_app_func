@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 #import seaborn as sns
 #from datetime import datetime
 import streamlit as st
@@ -347,9 +347,9 @@ if watch_scores:
     player_scores['Схожесть мыслей'] = scores
     player_scores.sort_values(by='Схожесть мыслей', ascending=False, inplace=True)
     st.dataframe(player_scores)
-    fig = plt.figure(figsize=(10, 4))
-    plt.bar(player_scores['name'][1:],player_scores['Схожесть мыслей'][1:])
-    st.pyplot(fig)
+    #fig = plt.figure(figsize=(10, 4))
+    #plt.bar(player_scores['name'][1:],player_scores['Схожесть мыслей'][1:])
+    #st.pyplot(fig)
 
 st.text('')
 st.text('')
