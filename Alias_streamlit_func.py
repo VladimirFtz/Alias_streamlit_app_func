@@ -15,7 +15,22 @@ def data_read_prepare(data_csv):
             data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
     return data
         
+# Счетаем все средние значения близости предложений у всех пар пользователей
+def calculate_all_pairs_scores(data):
+    scores_by_i = []
+    strings_count, _ = data.shape
+    for i in range(0,strings_count):
+        inner_scores = []
+        for j in range(0,strings_count):
+            cosine_scores = []
+            for k in range(1, alias_num + 1):
+                cosine_scores.append(float(util.cos_sim(data.iloc[i][f'embedding_{k}'], data.iloc[j][f'embedding_{k}'])))
+            inner_scores.append([i, j, np.mean(cosine_scores)])
+        scores_by_i.append(inner_scores)
+    scores_by_i = np.array(scores_by_i)
+    return scores_by_i
 
+       
 st.cache_data()
 def load_model():
 	  return SentenceTransformer('all-MiniLM-L6-v2')
@@ -128,19 +143,20 @@ if add_and_find:
     data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
-    scores_by_i = []
-    strings_count, _ = data.shape
-    for i in range(0,strings_count):
-        inner_scores = []
-        for j in range(0,strings_count):
-            cosine_scores = []
-            for k in range(1, alias_num + 1):
-                cosine_scores.append(float(util.cos_sim(data.iloc[i][f'embedding_{k}'], data.iloc[j][f'embedding_{k}'])))
-            inner_scores.append([i, j, np.mean(cosine_scores)])
-        scores_by_i.append(inner_scores)
+    #scores_by_i = []
+    #strings_count, _ = data.shape
+    #for i in range(0,strings_count):
+    #    inner_scores = []
+    #    for j in range(0,strings_count):
+    #        cosine_scores = []
+    #        for k in range(1, alias_num + 1):
+    #            cosine_scores.append(float(util.cos_sim(data.iloc[i][f'embedding_{k}'], data.iloc[j][f'embedding_{k}'])))
+    #        inner_scores.append([i, j, np.mean(cosine_scores)])
+    #    scores_by_i.append(inner_scores)
+    scores_by_i = calculate_all_pairs_scores(data)
     
     # Ищем и записывем близких по смыслу пользователей
-    scores_by_i = np.array(scores_by_i)
+    #scores_by_i = np.array(scores_by_i)
     for i in range(0,len(scores_by_i)):
         scores = scores_by_i[i]
         sorted_scores = scores[scores[:, 2].argsort()[::-1]]
@@ -232,19 +248,20 @@ if watch_results:
     data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
-    scores_by_i = []
-    strings_count, _ = data.shape
-    for i in range(0,strings_count):
-        inner_scores = []
-        for j in range(0,strings_count):
-            cosine_scores = []
-            for k in range(1, alias_num + 1):
-                cosine_scores.append(float(util.cos_sim(data.iloc[i][f'embedding_{k}'], data.iloc[j][f'embedding_{k}'])))
-            inner_scores.append([i, j, np.mean(cosine_scores)])
-        scores_by_i.append(inner_scores)
+    #scores_by_i = []
+    #strings_count, _ = data.shape
+    #for i in range(0,strings_count):
+    #    inner_scores = []
+    #    for j in range(0,strings_count):
+    #        cosine_scores = []
+    #        for k in range(1, alias_num + 1):
+    #            cosine_scores.append(float(util.cos_sim(data.iloc[i][f'embedding_{k}'], data.iloc[j][f'embedding_{k}'])))
+    #        inner_scores.append([i, j, np.mean(cosine_scores)])
+    #    scores_by_i.append(inner_scores)
+    scores_by_i = calculate_all_pairs_scores(data)
     
     # Ищем и записывем близких по смыслу пользователей
-    scores_by_i = np.array(scores_by_i)
+    #scores_by_i = np.array(scores_by_i)
     for i in range(0,len(scores_by_i)):
         scores = scores_by_i[i]
         sorted_scores = scores[scores[:, 2].argsort()[::-1]]
