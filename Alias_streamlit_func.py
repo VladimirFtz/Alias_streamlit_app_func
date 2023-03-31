@@ -5,10 +5,16 @@ import pandas as pd
 #from datetime import datetime
 import streamlit as st
 from PIL import Image
-
 from sentence_transformers import SentenceTransformer, util
 
-#model = SentenceTransformer('all-MiniLM-L6-v2')
+# Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
+def data_read_prepare(data_csv):
+    data = pd.read_csv(data_csv)
+    for i in range(len(data['embedding_1'])):
+        for j in range(1, alias_num + 1):
+            data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+    return data
+        
 
 st.cache_data()
 def load_model():
@@ -18,11 +24,13 @@ model = load_model()
 
 alias_num = 7
 
-# Счетываем данные после того как записали в таблицу нового человека и преобразуем их правильно
-data = pd.read_csv('Alias_data_1.csv')
-for i in range(len(data['embedding_1'])):
-    for j in range(1, alias_num + 1):
-        data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+
+# Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
+#data = pd.read_csv('Alias_data_1.csv')
+#for i in range(len(data['embedding_1'])):
+#    for j in range(1, alias_num + 1):
+#        data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+data = data_read_prepare('Alias_data_1.csv')
 
 st.title(':green[Родственные души и умы по Alias:) Alias soulmates ✨]')
 
@@ -112,11 +120,12 @@ if add_and_find:
     #Записываем дату, важно записать без индекса
     data.to_csv('Alias_data_1.csv',index=False)
     
-    # Счетываем данные после того как записали в таблицу нового человека и преобразуем их правильно
-    data = pd.read_csv('Alias_data_1.csv')
-    for i in range(len(data['embedding_1'])):
-        for j in range(1, alias_num + 1):
-            data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+    # Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
+    #data = pd.read_csv('Alias_data_1.csv')
+    #for i in range(len(data['embedding_1'])):
+    #    for j in range(1, alias_num + 1):
+    #        data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+    data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
     scores_by_i = []
@@ -215,11 +224,12 @@ phone_number = st.text_input('Введите ваш номер телефона 
 watch_results = st.button('Посмотреть компаньонов 🧭')
 if watch_results:
     st.header(':green[Игроки с похожими мыслями] 🧭')
-    # Счетываем данные после того как записали в таблицу нового человека и преобразуем их правильно
-    data = pd.read_csv('Alias_data_1.csv')
-    for i in range(len(data['embedding_1'])):
-        for j in range(1, alias_num + 1):
-            data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+    # Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
+    #data = pd.read_csv('Alias_data_1.csv')
+    #for i in range(len(data['embedding_1'])):
+    #    for j in range(1, alias_num + 1):
+    #        data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+    data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
     scores_by_i = []
@@ -322,11 +332,12 @@ if watch_sentences:
 
 watch_scores = st.button('Посмотреть схожесть объяснений со всеми игроками 🧭')
 if watch_scores:
-    # Счетываем данные после того как записали в таблицу нового человека и преобразуем их правильно
-    data = pd.read_csv('Alias_data_1.csv')
-    for i in range(len(data['embedding_1'])):
-        for j in range(1, alias_num + 1):
-            data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+    # Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
+    #data = pd.read_csv('Alias_data_1.csv')
+    #for i in range(len(data['embedding_1'])):
+    #    for j in range(1, alias_num + 1):
+    #        data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
+    data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
     scores_by_i = []
