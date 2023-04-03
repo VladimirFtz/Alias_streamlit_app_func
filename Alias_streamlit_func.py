@@ -136,23 +136,9 @@ if add_and_find:
     data.to_csv('Alias_data_1.csv',index=False)
     
     # Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
-    #data = pd.read_csv('Alias_data_1.csv')
-    #for i in range(len(data['embedding_1'])):
-    #    for j in range(1, alias_num + 1):
-    #        data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
     data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
-    #scores_by_i = []
-    #strings_count, _ = data.shape
-    #for i in range(0,strings_count):
-    #    inner_scores = []
-    #    for j in range(0,strings_count):
-    #        cosine_scores = []
-    #        for k in range(1, alias_num + 1):
-    #            cosine_scores.append(float(util.cos_sim(data.iloc[i][f'embedding_{k}'], data.iloc[j][f'embedding_{k}'])))
-    #        inner_scores.append([i, j, np.mean(cosine_scores)])
-    #    scores_by_i.append(inner_scores)
     scores_by_i = calculate_all_pairs_scores(data)
     
     # Ищем и записывем близких по смыслу пользователей
@@ -241,23 +227,9 @@ watch_results = st.button('Посмотреть компаньонов 🧭')
 if watch_results:
     st.header(':green[Игроки с похожими мыслями] 🧭')
     # Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
-    #data = pd.read_csv('Alias_data_1.csv')
-    #for i in range(len(data['embedding_1'])):
-    #    for j in range(1, alias_num + 1):
-    #        data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
     data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
-    #scores_by_i = []
-    #strings_count, _ = data.shape
-    #for i in range(0,strings_count):
-    #    inner_scores = []
-    #    for j in range(0,strings_count):
-    #        cosine_scores = []
-    #        for k in range(1, alias_num + 1):
-    #            cosine_scores.append(float(util.cos_sim(data.iloc[i][f'embedding_{k}'], data.iloc[j][f'embedding_{k}'])))
-    #        inner_scores.append([i, j, np.mean(cosine_scores)])
-    #    scores_by_i.append(inner_scores)
     scores_by_i = calculate_all_pairs_scores(data)
     
     # Ищем и записывем близких по смыслу пользователей
@@ -350,23 +322,10 @@ if watch_sentences:
 watch_scores = st.button('Посмотреть схожесть объяснений со всеми игроками 🧭')
 if watch_scores:
     # Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
-    #data = pd.read_csv('Alias_data_1.csv')
-    #for i in range(len(data['embedding_1'])):
-    #    for j in range(1, alias_num + 1):
-    #        data[f'embedding_{j}'][i] = np.array(data[f'embedding_{j}'][i].replace('[', ' ').replace(']', ' ').split()).astype(np.float64)
     data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
-    scores_by_i = []
-    strings_count, _ = data.shape
-    for i in range(0,strings_count):
-        inner_scores = []
-        for j in range(0,strings_count):
-            cosine_scores = []
-            for k in range(1, alias_num + 1):
-                cosine_scores.append(float(util.cos_sim(data.iloc[i][f'embedding_{k}'], data.iloc[j][f'embedding_{k}'])))
-            inner_scores.append([i, j, np.mean(cosine_scores)])
-        scores_by_i.append(inner_scores)
+    scores_by_i = calculate_all_pairs_scores(data)
         
     row_index = data.loc[data['phone_number'] == int(phone_number)].index.to_list()[0]
     scores = np.array(scores_by_i[row_index])[:,2]
