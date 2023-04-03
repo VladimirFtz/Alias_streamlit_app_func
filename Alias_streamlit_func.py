@@ -30,7 +30,22 @@ def calculate_all_pairs_scores(data):
     scores_by_i = np.array(scores_by_i)
     return scores_by_i
 
-       
+# Ищем и записывем близких по смыслу пользователей
+def find_and_write_soulmates(data, scores_by_i):
+    for i in range(0,len(scores_by_i)):
+        scores = scores_by_i[i]
+        sorted_scores = scores[scores[:, 2].argsort()[::-1]]
+        best_counter = 1
+        k = 0
+        while best_counter < 3:
+            if sorted_scores[k,1] != sorted_scores[k,0]:
+                data.loc[i,f'best_pair_{best_counter}'] = sorted_scores[k,1]
+                data.loc[i,f'best_score_{best_counter}'] = sorted_scores[k,2]
+                best_counter += 1
+            k += 1
+    return data
+
+        
 st.cache_data()
 def load_model():
 	  return SentenceTransformer('all-MiniLM-L6-v2')
@@ -132,7 +147,7 @@ if add_and_find:
     else:
         data.loc[len(data.index)] = [name, phone_number, link, alias_1, alias_2, alias_3, alias_4, alias_5, alias_6, alias_7, \
         embedding_1, embedding_2, embedding_3, embedding_4, embedding_5, embedding_6, embedding_7, 0, 0, 0, 0, 0, 0]
-    #Записываем дату, важно записать без индекса
+    #Записываем данные, важно записать без индекса
     data.to_csv('Alias_data_1.csv',index=False)
     
     # Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
@@ -143,19 +158,20 @@ if add_and_find:
     
     # Ищем и записывем близких по смыслу пользователей
     #scores_by_i = np.array(scores_by_i)
-    for i in range(0,len(scores_by_i)):
-        scores = scores_by_i[i]
-        sorted_scores = scores[scores[:, 2].argsort()[::-1]]
-        best_counter = 1
-        k = 0
-        while best_counter < 3:
-            if sorted_scores[k,1] != sorted_scores[k,0]:
-                data.loc[i,f'best_pair_{best_counter}'] = sorted_scores[k,1]
-                data.loc[i,f'best_score_{best_counter}'] = sorted_scores[k,2]
-                best_counter += 1
-            k += 1
+    #for i in range(0,len(scores_by_i)):
+    #    scores = scores_by_i[i]
+    #    sorted_scores = scores[scores[:, 2].argsort()[::-1]]
+    #    best_counter = 1
+    #    k = 0
+    #    while best_counter < 3:
+    #        if sorted_scores[k,1] != sorted_scores[k,0]:
+    #            data.loc[i,f'best_pair_{best_counter}'] = sorted_scores[k,1]
+    #            data.loc[i,f'best_score_{best_counter}'] = sorted_scores[k,2]
+    #            best_counter += 1
+    #        k += 1
+    data = find_and_write_soulmates(data, scores_by_i)
     
-    #Записываем дату, важно записать без индекса
+    #Записываем данные, важно записать без индекса
     data.to_csv('Alias_data_1.csv',index=False)
     
     # Выводим лучшие пары игрока
@@ -226,7 +242,7 @@ phone_number = st.text_input('Введите ваш номер телефона 
 watch_results = st.button('Посмотреть компаньонов 🧭')
 if watch_results:
     st.header(':green[Игроки с похожими мыслями] 🧭')
-    # Считываем данные после того как записали в таблицу нового человека и преобразуем их правильно
+    # Считываем данные и преобразуем их правильно
     data = data_read_prepare('Alias_data_1.csv')
     
     # Счетаем все средние значения близости предложений у всех пар пользователей
@@ -234,17 +250,18 @@ if watch_results:
     
     # Ищем и записывем близких по смыслу пользователей
     #scores_by_i = np.array(scores_by_i)
-    for i in range(0,len(scores_by_i)):
-        scores = scores_by_i[i]
-        sorted_scores = scores[scores[:, 2].argsort()[::-1]]
-        best_counter = 1
-        k = 0
-        while best_counter < 3:
-            if sorted_scores[k,1] != sorted_scores[k,0]:
-                data.loc[i,f'best_pair_{best_counter}'] = sorted_scores[k,1]
-                data.loc[i,f'best_score_{best_counter}'] = sorted_scores[k,2]
-                best_counter += 1
-            k += 1
+    #for i in range(0,len(scores_by_i)):
+    #    scores = scores_by_i[i]
+    #    sorted_scores = scores[scores[:, 2].argsort()[::-1]]
+    #    best_counter = 1
+    #    k = 0
+    #    while best_counter < 3:
+    #        if sorted_scores[k,1] != sorted_scores[k,0]:
+    #            data.loc[i,f'best_pair_{best_counter}'] = sorted_scores[k,1]
+    #            data.loc[i,f'best_score_{best_counter}'] = sorted_scores[k,2]
+    #            best_counter += 1
+    #        k += 1
+    data = find_and_write_soulmates(data, scores_by_i)
             
     row_index = data.loc[data['phone_number'] == int(phone_number)].index
     current = data.loc[data['phone_number'] == int(phone_number)]
